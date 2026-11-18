@@ -131,8 +131,8 @@ $$w_i(t) = \frac{r_i(t)}{\sum_{k \in \text{guild}} r_k(t)}$$
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/coupled-ch4mod-petrinet.git
-   cd coupled-ch4mod-petrinet
+   git clone https://github.com/kjxlau/CH4MicrobiomeSim.git
+   cd CH4MicrobiomeSim
    ```
 
 2. **Create and activate a virtual environment:**
