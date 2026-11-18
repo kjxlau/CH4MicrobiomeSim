@@ -74,13 +74,13 @@ The Petri net represents 10 functional microbial taxa categorized into three ini
 | **`Methanothrix`** | $5{,}000$ | Obligate acetoclastic methanogenesis | Significant in Wk 3 (r=0.617) & Wk 6 (r=0.555) |
 | **`Methanosarcina`** | $5{,}000$ | Mixotrophic methanogenesis | Significant in Wk 3 (r=0.367) & Wk 10 (N2O (r=-0.297) |
 | **`Nitrospira`** | $5{,}000$ | Aerobic nitrification ($\text{NH}_4^+ \to \text{NO}_3^{-}$) | Significant in Wk 3 (CH4=-0.390, {N2O=0.357) |
-| **`Methanocella`** | $1{,}000$ | Hydrogenotrophic (Rice Cluster I) | Significant in Wk 3 ($r=0.530^{***}$) & Wk 6 ($r=0.405^{***}$) |
-| **`Methylocaldum`** | $500$ | Aerobic methanotrophy ($\text{CH}_4 \to \text{CO}_2$) | Significant in Wk 3 ($r=0.341^{*}$), Wk 6 ($r=0.345^{**}$), Wk 10 ($r_{\text{N}_2\text{O}}=-0.347^{**}$) |
-| **`Desulfomonile`** | $200$ | Sulfate-reducing bacterium (SRB) | Significant in Wk 3 ($r=0.501^{***}$) & Wk 6 ($r=0.442^{***}$) |
+| **`Methanocella`** | $1{,}000$ | Hydrogenotrophic (Rice Cluster I) | Significant in Wk 3 (r=0.530) & Wk 6 (r=0.405) |
+| **`Methylocaldum`** | $500$ | Aerobic methanotrophy ($\text{CH}_4 \to \text{CO}_2$) | Significant in Wk 3 (r=0.341), Wk 6 (r=0.345), Wk 10 (N2O=-0.347) |
+| **`Desulfomonile`** | $200$ | Sulfate-reducing bacterium (SRB) | Significant in Wk 3 (r=0.501) & Wk 6 (r=0.442) |
 | **`Sulfuricaulis`** | $200$ | Chemolithotrophic sulfur oxidation | Ambient cycling partner ($ns$ across weeks) |
-| **`Methanobacterium`** | $100$ | Hydrogenotrophic seed-bank | Significant in Wk 3 ($r=0.514^{***}$) & Wk 10 ($\text{N}_2\text{O}\ r=-0.371^{**}$) |
-| **`Methanoregula`** | $100$ | Hydrogenotrophic seeder (Wk 6 bloom) | Significant in Wk 3 ($r=0.501^{***}$) & Wk 6 surge ($r=0.621^{***}$) |
-| **`Syntrophus`** | $100$ | Syntrophic VFA oxidizer | Significant in Wk 6 surge ($r=0.562^{***}$) |
+| **`Methanobacterium`** | $100$ | Hydrogenotrophic seed-bank | Significant in Wk 3 (r=0.514) & Wk 10 (N2O r=-0.371) |
+| **`Methanoregula`** | $100$ | Hydrogenotrophic seeder (Wk 6 bloom) | Significant in Wk 3 (r=0.501) & Wk 6 surge (r=0.621) |
+| **`Syntrophus`** | $100$ | Syntrophic VFA oxidizer | Significant in Wk 6 surge (r=0.562) |
 
 ---
 
