@@ -224,7 +224,7 @@ If you use this model or code in your research, please cite:
   year         = {2026},
   publisher    = {GitHub},
   journal      = {GitHub repository},
-  howpublished = {\url{https://github.com/kjxlau/CH4MicrobiomeSem}}
+  howpublished = {\url{https://github.com/kjxlau/CH4MicrobiomeSim}}
 }
 ```
 
