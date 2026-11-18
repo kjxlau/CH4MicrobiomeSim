@@ -98,7 +98,7 @@ Derived from simulated continuous soil redox potential ($E_h$) via a Boltzmann l
 
 $$R_{\text{anaer}}(t) = \frac{1}{1 + \exp\left(\frac{E_h(t) - (-100\text{ mV})}{30\text{ mV}}\right)}$$
 
-*Under aerobic conditions ($E_h \gg -100\text{ mV}$), $R_{\text{anaer}} \to 0$; under sustained flooding ($E_h \ll -100\text{ mV}$), $R_{\text{anaer}} \to 1.0$.*
+Under aerobic conditions ($E_h \gg -100\text{ mV}$), $R_{\text{anaer}} \to 0$; under sustained flooding ($E_h \ll -100\text{ mV}$), $R_{\text{anaer}} \to 1.0$.
 
 #### 2. Thermodynamic Sulfate Suppression $\mathcal{T}(t) = S_{\text{sulf-supp}}$
 Captures competitive exclusion of acetoclastic methanogens by sulfate reducers (*Desulfomonile*):
