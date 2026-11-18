@@ -2,7 +2,7 @@ Here is a comprehensive, publication-ready `README.md` tailored for your GitHub 
 
 ---
 
-# 🌾 Coupled CH4MOD & Microbiome Syntrophy Simulator
+# 🌾 Coupled CH4MOD & Microbiome Digital Twin Simulator
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/)
 [![Gradio](https://img.shields.io/badge/UI-Gradio%205%2B-orange.svg)](https://www.gradio.app/)
@@ -10,7 +10,7 @@ Here is a comprehensive, publication-ready `README.md` tailored for your GitHub 
 [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces%20Compatible-yellow)](https://huggingface.co/spaces)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%20v3-red.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-An integrated, multi-scale biogeochemical modeling framework that couples the macroscopic **CH4MOD** biophysical rice-soil model with a microscopic, **stoichiometric Petri Net** parameterised by longitudinal metagenomic correlation metrics ($r$, $p$, $p_{\text{adj}}$) across phenological stages (Weeks 3, 6, and 10 post-transplant).
+An integrated, multi-scale biogeochemical modeling framework that couples the macroscopic **CH4MOD** biophysical rice-soil model with a microscopic, **stoichiometric Petri Net** parameterised by longitudinal metagenomic correlation metrics ($r$, $p$, $p_{\text{adj}}$) across phenological stages (Weeks 3, 6, and 10 post-transplant). [Link CH4MicrobiomeSim](https://huggingface.co/spaces/TemasekLifesciLab/CH4MicrobiomeSim)
 
 ---
 
@@ -213,12 +213,12 @@ If you use this model or code in your research, please cite:
 
 ```bibtex
 @software{ch4mod_petrinet_2026,
-  author       = {Your Name/Lab},
+  author       = {Kenny J.X. Lau, Kins Varghese, Ali Ma, Kasthurirengan Sampath, Goh Phuay Yee, Suhartono F. Wijoyo, Srinivasan Ramachandran, Naweed I. Naqvi1},
   title        = {Coupled CH4MOD and Metagenomically Constrained Petri Net Simulator for Rice Paddy Greenhouse Gas Emissions},
   year         = {2026},
   publisher    = {GitHub},
   journal      = {GitHub repository},
-  howpublished = {\url{https://github.com/your-username/coupled-ch4mod-petrinet}}
+  howpublished = {\url{https://github.com/your-username/CH4MicrobiomeSem}}
 }
 ```
 
