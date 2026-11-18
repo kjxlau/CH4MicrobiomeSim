@@ -1,5 +1,3 @@
-Here is a comprehensive, publication-ready `README.md` tailored for your GitHub repository.
-
 ---
 
 # 🌾 Coupled CH4MOD & Microbiome Digital Twin Simulator
@@ -32,16 +30,16 @@ An integrated, multi-scale biogeochemical modeling framework that couples the ma
 
 Methane ($\text{CH}_4$) and nitrous oxide ($\text{N}_2\text{O}$) emissions from rice paddies are driven by non-linear interactions between agricultural management, soil physicochemical status ($E_h$, water table, sulfate), and microbial community succession. 
 
-Traditional biogeochemical models (e.g., DNDC, CH4MOD) treat microbial processes as generic, lumped first-order kinetic pools. This software bridges the macro-micro gap:
+Traditional biogeochemical models treat microbial processes as generic, lumped first-order kinetic pools. This software bridges the macro-micro gap:
 1. **Macroscopic Layer (CH4MOD):** Simulates daily plant biomass development, soil carbon depolymerisation, continuous redox potential ($E_h$), and physical emission pathways (plant-mediated aerenchyma transport, ebullition, diffusion) across a continuous **2-year timeline ($730\text{ days}$)**.
-2. **Microscopic Layer (Petri Net):** Implements a discrete, stochastic Petri Net (using PM4Py) representing a **10-taxon syntrophic consortium**. Transition arc weights are dynamically modulated by physical redox feasibility ($R_{\text{anaer}}$), competitive sulfate inhibition ($S_{\text{sulf\_supp}}$), and stage-specific metagenomic Pearson correlation coefficients ($w_i$).
+2. **Microscopic Layer (Petri Net):** Implements a discrete, stochastic Petri Net (using PM4Py) representing a **10-taxon syntrophic consortium**. Transition arc weights are dynamically modulated by physical redox feasibility ($R_{\text{anaer}}$), competitive sulfate inhibition ($S_{\text{sulf-supp}}$), and stage-specific metagenomic Pearson correlation coefficients ($w_i$).
 
 ```
 [ Climate Data: T2M, TS, Water Depth ]
                  │
                  ▼
      ┌───────────────────────┐
-     │  CH4MOD Macro-Model   │──► Daily Biomass, Redox (Eh), Prod_CH4, Aerenchyma Flux
+     │  CH4MOD Macro-Model   │──► Daily Biomass, Redox (Eh), Daily CH4, Aerenchyma Flux
      └───────────────────────┘
                  │ (Hourly Coupling via Eh, Sulfate, Substrates)
                  ▼
@@ -71,16 +69,16 @@ The Petri net represents 10 functional microbial taxa categorized into three ini
 
 | Taxon | Initial Tokens ($M_0$) | Guild / Functional Role | Statistical Status across Growth Stages |
 | :--- | :---: | :--- | :--- |
-| **`Methanothrix`** | $5{,}000$ | Obligate acetoclastic methanogenesis | Significant in Wk 3 (r=0.617) & Wk 6 (r=0.555) |
-| **`Methanosarcina`** | $5{,}000$ | Mixotrophic methanogenesis | Significant in Wk 3 (r=0.367) & Wk 10 (N2O (r=-0.297) |
-| **`Nitrospira`** | $5{,}000$ | Aerobic nitrification ($\text{NH}_4^+ \to \text{NO}_3^{-}$) | Significant in Wk 3 (CH4=-0.390, {N2O=0.357) |
-| **`Methanocella`** | $1{,}000$ | Hydrogenotrophic (Rice Cluster I) | Significant in Wk 3 (r=0.530) & Wk 6 (r=0.405) |
-| **`Methylocaldum`** | $500$ | Aerobic methanotrophy ($\text{CH}_4 \to \text{CO}_2$) | Significant in Wk 3 (r=0.341), Wk 6 (r=0.345), Wk 10 (N2O=-0.347) |
-| **`Desulfomonile`** | $200$ | Sulfate-reducing bacterium (SRB) | Significant in Wk 3 (r=0.501) & Wk 6 (r=0.442) |
+| **`Methanothrix`** | $5{,}000$ | Obligate acetoclastic methanogenesis | Significant in Wk 3 ($r=0.617^{***}$) & Wk 6 ($r=0.555^{***}$) |
+| **`Methanosarcina`** | $5{,}000$ | Mixotrophic methanogenesis | Significant in Wk 3 ($r=0.367^*$) & Wk 10 ($r_{\text{N2O}}=-0.297^*$) |
+| **`Nitrospira`** | $5{,}000$ | Aerobic nitrification ($\text{NH}_4^+ \to \text{NO}_3^-$) | Significant in Wk 3 ($r_{\text{CH4}}=-0.390^{**}$, $r_{\text{N2O}}=0.357^*$) |
+| **`Methanocella`** | $1{,}000$ | Hydrogenotrophic (Rice Cluster I) | Significant in Wk 3 ($r=0.530^{***}$) & Wk 6 ($r=0.405^{***}$) |
+| **`Methylocaldum`** | $500$ | Aerobic methanotrophy ($\text{CH}_4 \to \text{CO}_2$) | Significant in Wk 3 ($r=0.341^*$), Wk 6 ($r=0.345^{**}$), Wk 10 ($r_{\text{N2O}}=-0.347^{**}$) |
+| **`Desulfomonile`** | $200$ | Sulfate-reducing bacterium (SRB) | Significant in Wk 3 ($r=0.501^{***}$) & Wk 6 ($r=0.442^{***}$) |
 | **`Sulfuricaulis`** | $200$ | Chemolithotrophic sulfur oxidation | Ambient cycling partner ($ns$ across weeks) |
-| **`Methanobacterium`** | $100$ | Hydrogenotrophic seed-bank | Significant in Wk 3 (r=0.514) & Wk 10 (N2O r=-0.371) |
-| **`Methanoregula`** | $100$ | Hydrogenotrophic seeder (Wk 6 bloom) | Significant in Wk 3 (r=0.501) & Wk 6 surge (r=0.621) |
-| **`Syntrophus`** | $100$ | Syntrophic VFA oxidizer | Significant in Wk 6 surge (r=0.562) |
+| **`Methanobacterium`** | $100$ | Hydrogenotrophic seed-bank | Significant in Wk 3 ($r=0.514^{***}$) & Wk 10 ($r_{\text{N2O}}=-0.371^{**}$) |
+| **`Methanoregula`** | $100$ | Hydrogenotrophic seeder (Wk 6 bloom) | Significant in Wk 3 ($r=0.501^{***}$) & Wk 6 surge ($r=0.621^{***}$) |
+| **`Syntrophus`** | $100$ | Syntrophic VFA oxidizer | Significant in Wk 6 surge ($r=0.562^{***}$) |
 
 ---
 
@@ -94,16 +92,21 @@ $$W_{T \to P}(t) = \max\left(1, \, \Big\lfloor W_{\text{base}} \cdot \Big(\beta 
 
 #### 1. Environmental Redox Gating $\mathcal{E}(t) = R_{\text{anaer}}$
 Derived from simulated continuous soil redox potential ($E_h$) via a Boltzmann logistic function:
+
 $$R_{\text{anaer}}(t) = \frac{1}{1 + \exp\left(\frac{E_h(t) - (-100\text{ mV})}{30\text{ mV}}\right)}$$
+
 *Under aerobic conditions ($E_h \gg -100\text{ mV}$), $R_{\text{anaer}} \to 0$; under sustained flooding ($E_h \ll -100\text{ mV}$), $R_{\text{anaer}} \to 1.0$.*
 
-#### 2. Thermodynamic Sulfate Suppression $\mathcal{T}(t) = S_{\text{sulf\_supp}}$
+#### 2. Thermodynamic Sulfate Suppression $\mathcal{T}(t) = S_{\text{sulf-supp}}$
 Captures competitive exclusion of acetoclastic methanogens by sulfate reducers (*Desulfomonile*):
-$$S_{\text{sulf\_supp}}(t) = 1.0 - 0.6 \times \left(\frac{[\text{Sulphate}]}{[\text{Sulphate}] + 1000}\right)$$
+
+$$S_{\text{sulf-supp}}(t) = 1.0 - 0.6 \times \left(\frac{[\text{Sulphate}]}{[\text{Sulphate}] + 1000}\right)$$
+
 *When sulfate is abundant, acetoclastic methanogenesis is suppressed by up to $60\%$.*
 
 #### 3. Metagenomic Allocation $\mathcal{M}(t) = w_i$
 Piecewise continuous stage-specific weighting normalized across active guild members:
+
 $$w_i(t) = \frac{r_i(t)}{\sum_{k \in \text{guild}} r_k(t)}$$
 
 #### 4. Basal Maintenance Floor ($\beta = 0.05$) & Kinetic Gain ($\gamma$)
@@ -125,8 +128,8 @@ $$w_i(t) = \frac{r_i(t)}{\sum_{k \in \text{guild}} r_k(t)}$$
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/kjxlau/CH4MicrobiomeSim.git
-   cd CH4MicrobiomeSim
+   git clone https://github.com/your-username/coupled-ch4mod-petrinet.git
+   cd coupled-ch4mod-petrinet
    ```
 
 2. **Create and activate a virtual environment:**
