@@ -105,7 +105,7 @@ Captures competitive exclusion of acetoclastic methanogens by sulfate reducers (
 
 $$S_{\text{sulf-supp}}(t) = 1.0 - 0.6 \times \left(\frac{[\text{Sulphate}]}{[\text{Sulphate}] + 1000}\right)$$
 
-*When sulfate is abundant, acetoclastic methanogenesis is suppressed by up to $60\%$.*
+*When sulfate is abundant, acetoclastic methanogenesis is suppressed by up to 60%.*
 
 #### 3. Metagenomic Allocation $\mathcal{M}(t) = w_i$
 Piecewise continuous stage-specific weighting normalized across active guild members:
