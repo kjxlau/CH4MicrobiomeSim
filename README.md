@@ -219,7 +219,7 @@ If you use this model or code in your research, please cite:
 
 ```bibtex
 @software{CH4MicrobiomeSim,
-  author       = {Kenny J.X. Lau, Kins Varghese, Ali Ma, Kasthurirengan Sampath, Goh Phuay Yee, Suhartono F. Wijoyo, Srinivasan Ramachandran, Naweed I. Naqvi1},
+  author       = {Kenny J.X. Lau, Kins Varghese, Ali Ma, Kasthurirengan Sampath, Goh Phuay Yee, Suhartono F. Wijoyo, Srinivasan Ramachandran, Naweed I. Naqvi},
   title        = {Coupled CH4MOD and Metagenomically Constrained Petri Net Simulator for Rice Paddy Greenhouse Gas Emissions},
   year         = {2026},
   publisher    = {GitHub},
