@@ -72,16 +72,16 @@ The Petri net represents 10 functional microbial taxa categorized into three ini
 
 | Taxon | Initial Tokens ($M_0$) | Guild / Functional Role | Statistical Status across Growth Stages |
 | :--- | :---: | :--- | :--- |
-| **`Methanothrix`** | $5{,}000$ | Obligate acetoclastic methanogenesis | Significant in Wk 3 ($r=0.617^{***}$) & Wk 6 ($r=0.555^{***}$) |
-| **`Methanosarcina`** | $5{,}000$ | Mixotrophic methanogenesis | Significant in Wk 3 ($r=0.367^*$) & Wk 10 ($r_{\text{N2O}}=-0.297^*$) |
-| **`Nitrospira`** | $5{,}000$ | Aerobic nitrification ($\text{NH}_4^+ \to \text{NO}_3^-$) | Significant in Wk 3 ($r_{\text{CH4}}=-0.390^{**}$, $r_{\text{N2O}}=0.357^*$) |
-| **`Methanocella`** | $1{,}000$ | Hydrogenotrophic (Rice Cluster I) | Significant in Wk 3 ($r=0.530^{***}$) & Wk 6 ($r=0.405^{***}$) |
-| **`Methylocaldum`** | $500$ | Aerobic methanotrophy ($\text{CH}_4 \to \text{CO}_2$) | Significant in Wk 3 ($r=0.341^*$), Wk 6 ($r=0.345^{**}$), Wk 10 ($r_{\text{N2O}}=-0.347^{**}$) |
-| **`Desulfomonile`** | $200$ | Sulfate-reducing bacterium (SRB) | Significant in Wk 3 ($r=0.501^{***}$) & Wk 6 ($r=0.442^{***}$) |
+| **`Methanothrix`** | $5{,}000$ | Obligate acetoclastic methanogenesis | Significant in Wk 3 (r=0.617***) & Wk 6 (r=0.555***) |
+| **`Methanosarcina`** | $5{,}000$ | Mixotrophic methanogenesis | Significant in Wk 3 (r=0.367*) & Wk 10 (N2O=-0.297*) |
+| **`Nitrospira`** | $5{,}000$ | Aerobic nitrification ($\text{NH}_4^+ \to \text{NO}_3^-$) | Significant in Wk 3 (CH4=-0.390, N2O=0.357) |
+| **`Methanocella`** | $1{,}000$ | Hydrogenotrophic (Rice Cluster I) | Significant in Wk 3 (r=0.530***) & Wk 6 (r=0.405***) |
+| **`Methylocaldum`** | $500$ | Aerobic methanotrophy ($\text{CH}_4 \to \text{CO}_2$) | Significant in Wk 3 (r=0.341*), Wk 6 (r=0.345**), Wk 10 (N2O=-0.347**) |
+| **`Desulfomonile`** | $200$ | Sulfate-reducing bacterium (SRB) | Significant in Wk 3 (r=0.501***) & Wk 6 (r=0.442***) |
 | **`Sulfuricaulis`** | $200$ | Chemolithotrophic sulfur oxidation | Ambient cycling partner ($ns$ across weeks) |
-| **`Methanobacterium`** | $100$ | Hydrogenotrophic seed-bank | Significant in Wk 3 ($r=0.514^{***}$) & Wk 10 ($r_{\text{N2O}}=-0.371^{**}$) |
-| **`Methanoregula`** | $100$ | Hydrogenotrophic seeder (Wk 6 bloom) | Significant in Wk 3 ($r=0.501^{***}$) & Wk 6 surge ($r=0.621^{***}$) |
-| **`Syntrophus`** | $100$ | Syntrophic VFA oxidizer | Significant in Wk 6 surge ($r=0.562^{***}$) |
+| **`Methanobacterium`** | $100$ | Hydrogenotrophic seed-bank | Significant in Wk 3 (r=0.514***) & Wk 10 (N2O=-0.371**) |
+| **`Methanoregula`** | $100$ | Hydrogenotrophic seeder (Wk 6 bloom) | Significant in Wk 3 (r=0.501***) & Wk 6 surge (r=0.621***) |
+| **`Syntrophus`** | $100$ | Syntrophic VFA oxidizer | Significant in Wk 6 surge (r=0.562***) |
 
 ---
 
@@ -224,11 +224,8 @@ If you use this model or code in your research, please cite:
   year         = {2026},
   publisher    = {GitHub},
   journal      = {GitHub repository},
-  howpublished = {\url{https://github.com/your-username/CH4MicrobiomeSem}}
+  howpublished = {\url{https://github.com/kjxlau/CH4MicrobiomeSem}}
 }
 ```
 
 ---
-
-## 📄 License
-This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)** due to its dependency on the open-source community edition of [PM4Py](https://pm4py.fit.fraunhofer.de/). Commercial licensing options are available through PM4Py.
