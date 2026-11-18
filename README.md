@@ -125,8 +125,8 @@ $$w_i(t) = \frac{r_i(t)}{\sum_{k \in \text{guild}} r_k(t)}$$
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/coupled-ch4mod-petrinet.git
-   cd coupled-ch4mod-petrinet
+   git clone https://github.com/kjxlau/CH4MicrobiomeSim.git
+   cd CH4MicrobiomeSim
    ```
 
 2. **Create and activate a virtual environment:**
@@ -212,7 +212,7 @@ The application provides an interactive control panel organized into functional 
 If you use this model or code in your research, please cite:
 
 ```bibtex
-@software{ch4mod_petrinet_2026,
+@software{CH4MicrobiomeSim,
   author       = {Kenny J.X. Lau, Kins Varghese, Ali Ma, Kasthurirengan Sampath, Goh Phuay Yee, Suhartono F. Wijoyo, Srinivasan Ramachandran, Naweed I. Naqvi1},
   title        = {Coupled CH4MOD and Metagenomically Constrained Petri Net Simulator for Rice Paddy Greenhouse Gas Emissions},
   year         = {2026},
