@@ -1,8 +1,4 @@
-Here is a comprehensive, publication-ready `README.md` tailored for your GitHub repository.
-
----
-
-# 🌾 Coupled CH4MOD & Microbiome Syntrophy Simulator
+# 🌾 Coupled CH4MOD & Microbiome Digital Twin Simulator
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/)
 [![Gradio](https://img.shields.io/badge/UI-Gradio%205%2B-orange.svg)](https://www.gradio.app/)
