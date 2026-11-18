@@ -10,7 +10,7 @@ Here is a comprehensive, publication-ready `README.md` tailored for your GitHub 
 [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces%20Compatible-yellow)](https://huggingface.co/spaces)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%20v3-red.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-An integrated, multi-scale biogeochemical modeling framework that couples the macroscopic **CH4MOD** biophysical rice-soil model with a microscopic, **stoichiometric Petri Net** parameterised by longitudinal metagenomic correlation metrics ($r$, $p$, $p_{\text{adj}}$) across phenological stages (Weeks 3, 6, and 10 post-transplant). [CH4MicrobiomeSim](https://huggingface.co/spaces/TemasekLifesciLab/CH4MicrobiomeSim) https://huggingface.co/spaces/TemasekLifesciLab/CH4MicrobiomeSim
+An integrated, multi-scale biogeochemical modeling framework that couples the macroscopic **CH4MOD** biophysical rice-soil model with a microscopic, **stoichiometric Petri Net** parameterised by longitudinal metagenomic correlation metrics ($r$, $p$, $p_{\text{adj}}$) across phenological stages (Weeks 3, 6, and 10 post-transplant). https://huggingface.co/spaces/TemasekLifesciLab/CH4MicrobiomeSim
 
 ---
 
