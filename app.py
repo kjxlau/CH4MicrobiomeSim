@@ -760,16 +760,20 @@ def run_petrinet(
 
         if is_ripening: current_marking[days90] = 1
         elif days90 in current_marking: del current_marking[days90]
-        
-        # Determine active week stage (Weeks 3, 6, 10)
+
+        # Determine active week stage (Weeks 3, 6, 10; 0 = off-season/fallow)
         if in_season:
-            if current_doy_in_season <= 28: active_week = 3
-            elif current_doy_in_season <= 56: active_week = 6
-            else: active_week = 10
+            if current_doy_in_season <= 28:
+                active_week = 3
+            elif current_doy_in_season <= 56:
+                active_week = 6
+            else:
+                active_week = 10
         else:
             active_week = 0
 
-        r_ch4 = WEEKLY_CORR_DATA[active_week]["CH4"]
+        corr_week = active_week if active_week in WEEKLY_CORR_DATA else 10
+        r_ch4 = WEEKLY_CORR_DATA[corr_week]["CH4"]
 
         # Physical Redox State
         eh_val = ch4mod_df.iloc[current_day]["Eh_Redox"]
