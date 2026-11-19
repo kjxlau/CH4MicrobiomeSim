@@ -765,9 +765,9 @@ def run_petrinet(
         if in_season:
             if current_doy_in_season <= 28: active_week = 3
             elif current_doy_in_season <= 56: active_week = 6
-            else: active_week = 10
+            elif current_doy_in_season <= 77: active_week = 10
         else:
-            active_week = 10
+            active_week = 0
 
         r_ch4 = WEEKLY_CORR_DATA[active_week]["CH4"]
 
