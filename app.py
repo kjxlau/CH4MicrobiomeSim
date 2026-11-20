@@ -440,13 +440,13 @@ def run_ch4mod(
     return fig, df, out_path
 
 # =========================================================================
-# 2. PETRI NET MICROBIAL FUNCTIONS (CALIBRATED)
+# 2. PETRI NET MICROBIAL FUNCTIONS
 # =========================================================================
-Y_DESULFOMONILE = 1.00
-Y_SULFURICAULIS = 1.15
-Y_ACETATE = 1.20
-Y_NITROSPIRA = 1.10
-Y_METHYLOC = 1.15
+Y_DESULFOMONILE = 1.15
+Y_SULFURICAULIS = 0.95
+Y_ACETATE = 1.50
+Y_NITROSPIRA = 0.90
+Y_METHYLOC = 1.05
 
 def create_ecosystem_net(tillerno_early, tillerno_mid, tillerno_late):
     net = pm4py.objects.petri_net.obj.PetriNet("Empirical Syntrophic Microbiome Net")
@@ -497,10 +497,9 @@ def create_ecosystem_net(tillerno_early, tillerno_mid, tillerno_late):
     mg_cella  = pm4py.objects.petri_net.obj.PetriNet.Transition("Methanocella_Hydrogeno_MG")
     mg_regula = pm4py.objects.petri_net.obj.PetriNet.Transition("Methanoregula_Hydrogeno_MG")
     
-    syntroph_ferm   = pm4py.objects.petri_net.obj.PetriNet.Transition("Syntrophus_Fermentation")
-    desulf_red      = pm4py.objects.petri_net.obj.PetriNet.Transition("Desulfomonile_Sulfate_Reduction")
-    sulfuri_ox      = pm4py.objects.petri_net.obj.PetriNet.Transition("Sulfuricaulis_Sulfur_Oxidation")
-    sulfuri_ox_oxic = pm4py.objects.petri_net.obj.PetriNet.Transition("Sulfuricaulis_Oxic_Growth")
+    syntroph_ferm = pm4py.objects.petri_net.obj.PetriNet.Transition("Syntrophus_Fermentation")
+    desulf_red    = pm4py.objects.petri_net.obj.PetriNet.Transition("Desulfomonile_Sulfate_Reduction")
+    sulfuri_ox    = pm4py.objects.petri_net.obj.PetriNet.Transition("Sulfuricaulis_Sulfur_Oxidation")
     
     O2_toxicity = pm4py.objects.petri_net.obj.PetriNet.Transition("O2_Toxicity")
     acetogenesis = pm4py.objects.petri_net.obj.PetriNet.Transition("Acetogenesis")
@@ -519,102 +518,94 @@ def create_ecosystem_net(tillerno_early, tillerno_mid, tillerno_late):
     
     net.transitions.update([
         mg_thrix, mg_bact, mg_sarc, mg_cella, mg_regula,
-        syntroph_ferm, desulf_red, sulfuri_ox, sulfuri_ox_oxic,
+        syntroph_ferm, desulf_red, sulfuri_ox,
         O2_toxicity, acetogenesis, decomposition, flood_event, anaerobic_decay,
         O2_consumption, drain_event, nitrification, denitrification,
         tillering, heading, ripening, methanotrophy, aerobic_oxidation
     ])
     
-    # 1. Nitrospira Nitrification (active in Drip and Flood oxic microzones)
-    petri_utils.add_arc_from_to(n_fertilizer, nitrification, net, weight=1)
+    # 1. Nitrospira Nitrification (Tuned for initial Nitrospira = 5,000)
+    petri_utils.add_arc_from_to(n_fertilizer, nitrification, net, weight=2)
     petri_utils.add_arc_from_to(nitrospira, nitrification, net, weight=2)
     petri_utils.add_arc_from_to(aerobic, nitrification, net, weight=2)
-    petri_utils.add_arc_from_to(nitrification, nitrospira, net, weight=6)
-    petri_utils.add_arc_from_to(nitrification, nitrate, net, weight=2)
+    petri_utils.add_arc_from_to(nitrification, nitrospira, net, weight=2)
+    petri_utils.add_arc_from_to(nitrification, nitrate, net, weight=1)
     
-    petri_utils.add_arc_from_to(nitrate, denitrification, net, weight=1)
+    petri_utils.add_arc_from_to(nitrate, denitrification, net, weight=2)
     petri_utils.add_arc_from_to(substrates, denitrification, net, weight=2)
     petri_utils.add_arc_from_to(denitrification, n2o, net, weight=1)
     petri_utils.add_arc_from_to(denitrification, co2, net, weight=1)
 
-    # 2. Syntrophus Fermentation
-    petri_utils.add_arc_from_to(syntrophus, syntroph_ferm, net, weight=2)
+    # 2. Syntrophus Fermentation (Seed 100 tokens, catalytic requirement = 1)
+    petri_utils.add_arc_from_to(syntrophus, syntroph_ferm, net, weight=1)
     petri_utils.add_arc_from_to(substrates, syntroph_ferm, net, weight=2)
-    petri_utils.add_arc_from_to(syntroph_ferm, syntrophus, net, weight=3)
+    petri_utils.add_arc_from_to(syntroph_ferm, syntrophus, net, weight=5)
     petri_utils.add_arc_from_to(syntroph_ferm, acetate, net, weight=5)
     petri_utils.add_arc_from_to(syntroph_ferm, co2, net, weight=1)
 
-    # 3. Methanogenesis Pathways (balanced consumption vs output)
-    # Methanothrix (minor in Flood ~1-2%, 0 in Drip)
+    # 3. Methanogenesis Pathways (Balanced Consumption vs. Output)
+    # Methanothrix: lowered input threshold (2) and boosted yield (5) -> Net gain +3 tokens/firing
     petri_utils.add_arc_from_to(methanothrix, mg_thrix, net, weight=2)
     petri_utils.add_arc_from_to(acetate, mg_thrix, net, weight=2)
     petri_utils.add_arc_from_to(mg_thrix, methanothrix, net, weight=5)
     petri_utils.add_arc_from_to(mg_thrix, CH4_in_soil, net, weight=2)
     petri_utils.add_arc_from_to(mg_thrix, co2, net, weight=1)
 
-    # Methanobacterium (moderate in Flood ~3-7%)
     petri_utils.add_arc_from_to(methanobacterium, mg_bact, net, weight=2)
     petri_utils.add_arc_from_to(substrates, mg_bact, net, weight=2)
     petri_utils.add_arc_from_to(mg_bact, methanobacterium, net, weight=4)
     petri_utils.add_arc_from_to(mg_bact, CH4_in_soil, net, weight=2)
 
-    # Methanosarcina (main methanogen ~7-16% in Flood, ~2-4% in Drip)
-    petri_utils.add_arc_from_to(methanosarcina, mg_sarc, net, weight=3)
+    petri_utils.add_arc_from_to(methanosarcina, mg_sarc, net, weight=2)
     petri_utils.add_arc_from_to(acetate, mg_sarc, net, weight=2)
     petri_utils.add_arc_from_to(mg_sarc, methanosarcina, net, weight=6)
     petri_utils.add_arc_from_to(mg_sarc, CH4_in_soil, net, weight=2)
     petri_utils.add_arc_from_to(mg_sarc, co2, net, weight=1)
 
-    # Methanocella (moderate in Flood ~3-6%)
     petri_utils.add_arc_from_to(methanocella, mg_cella, net, weight=2)
     petri_utils.add_arc_from_to(substrates, mg_cella, net, weight=2)
     petri_utils.add_arc_from_to(mg_cella, methanocella, net, weight=4)
     petri_utils.add_arc_from_to(mg_cella, CH4_in_soil, net, weight=2)
 
-    # Methanoregula (minor in Flood ~1-3%)
     petri_utils.add_arc_from_to(methanoregula, mg_regula, net, weight=2)
     petri_utils.add_arc_from_to(substrates, mg_regula, net, weight=2)
     petri_utils.add_arc_from_to(mg_regula, methanoregula, net, weight=3)
     petri_utils.add_arc_from_to(mg_regula, CH4_in_soil, net, weight=2)
 
-    # 4. Desulfomonile Sulfate Reduction
+    # 4. Desulfomonile Sulfate Reduction (200 tokens)
     petri_utils.add_arc_from_to(desulfomonile, desulf_red, net, weight=2)
     petri_utils.add_arc_from_to(acetate, desulf_red, net, weight=2)
     petri_utils.add_arc_from_to(sulphate, desulf_red, net, weight=1)
-    petri_utils.add_arc_from_to(desulf_red, desulfomonile, net, weight=3)
-    petri_utils.add_arc_from_to(desulf_red, h2s, net, weight=2)
+    petri_utils.add_arc_from_to(desulf_red, desulfomonile, net, weight=10)
+    petri_utils.add_arc_from_to(desulf_red, h2s, net, weight=1)
     petri_utils.add_arc_from_to(desulf_red, co2, net, weight=2)
 
-    # 5. Sulfuricaulis Sulfur Oxidation (Flood anaerobic route + Drip oxic route)
+    # 5. Sulfuricaulis Sulfur Oxidation (200 tokens)
     petri_utils.add_arc_from_to(sulfuricaulis, sulfuri_ox, net, weight=2)
     petri_utils.add_arc_from_to(h2s, sulfuri_ox, net, weight=1)
     petri_utils.add_arc_from_to(nitrate, sulfuri_ox, net, weight=1)
-    petri_utils.add_arc_from_to(sulfuri_ox, sulfuricaulis, net, weight=4)
+    petri_utils.add_arc_from_to(sulfuri_ox, sulfuricaulis, net, weight=5)
     petri_utils.add_arc_from_to(sulfuri_ox, sulphate, net, weight=1)
-
-    petri_utils.add_arc_from_to(sulfuricaulis, sulfuri_ox_oxic, net, weight=2)
-    petri_utils.add_arc_from_to(aerobic, sulfuri_ox_oxic, net, weight=2)
-    petri_utils.add_arc_from_to(substrates, sulfuri_ox_oxic, net, weight=1)
-    petri_utils.add_arc_from_to(sulfuri_ox_oxic, sulfuricaulis, net, weight=4)
-    petri_utils.add_arc_from_to(sulfuri_ox_oxic, sulphate, net, weight=1)
 
     # 6. Fermentation & Decomposition
     petri_utils.add_arc_from_to(organic_matter, decomposition, net, weight=1)
     petri_utils.add_arc_from_to(decomposition, substrates, net, weight=20)
-    petri_utils.add_arc_from_to(substrates, acetogenesis, net, weight=15)
+    petri_utils.add_arc_from_to(substrates, acetogenesis, net, weight=20)
     petri_utils.add_arc_from_to(anaerobic, acetogenesis, net, weight=10)
-    petri_utils.add_arc_from_to(acetogenesis, acetate, net, weight=80)
+    petri_utils.add_arc_from_to(acetogenesis, acetate, net, weight=100)
 
-    # 7. Redox Controls (Nitrospira is NOT consumed by anaerobic_decay)
+    # 7. Redox Controls & Toxicity Protection for Rare Taxa
     petri_utils.add_arc_from_to(anaerobic, anaerobic_decay, net, weight=10)
     petri_utils.add_arc_from_to(anaerobic_decay, anaerobic, net, weight=100)
+    petri_utils.add_arc_from_to(nitrospira, anaerobic_decay, net, weight=2)
     petri_utils.add_arc_from_to(flood, flood_event, net, weight=1)
-    petri_utils.add_arc_from_to(aerobic, flood_event, net, weight=500)
+    petri_utils.add_arc_from_to(aerobic, flood_event, net, weight=1000)
     petri_utils.add_arc_from_to(flood_event, anaerobic, net, weight=100)
     
-    petri_utils.add_arc_from_to(methanothrix, O2_toxicity, net, weight=5)
+    # Toxicity losses set to 2 to prevent rapid washout
+    petri_utils.add_arc_from_to(methanothrix, O2_toxicity, net, weight=2)
     petri_utils.add_arc_from_to(methanosarcina, O2_toxicity, net, weight=2)
-    petri_utils.add_arc_from_to(methanocella, O2_toxicity, net, weight=3)
+    petri_utils.add_arc_from_to(methanocella, O2_toxicity, net, weight=2)
     petri_utils.add_arc_from_to(methanobacterium, O2_toxicity, net, weight=2)
     petri_utils.add_arc_from_to(methanoregula, O2_toxicity, net, weight=2)
     petri_utils.add_arc_from_to(desulfomonile, O2_toxicity, net, weight=2)
@@ -637,11 +628,11 @@ def create_ecosystem_net(tillerno_early, tillerno_mid, tillerno_late):
     petri_utils.add_arc_from_to(heading, CH4_in_air, net, weight=tillerno_mid)
     petri_utils.add_arc_from_to(ripening, CH4_in_air, net, weight=tillerno_late)
 
-    # 9. Methylocaldum Methanotrophy
+    # 9. Methylocaldum Methanotrophy (500 tokens)
     petri_utils.add_arc_from_to(CH4_in_soil, methanotrophy, net, weight=1)
     petri_utils.add_arc_from_to(methylocaldum, methanotrophy, net, weight=2)
     petri_utils.add_arc_from_to(aerobic, methanotrophy, net, weight=2)
-    petri_utils.add_arc_from_to(methanotrophy, methylocaldum, net, weight=4)
+    petri_utils.add_arc_from_to(methanotrophy, methylocaldum, net, weight=5)
     petri_utils.add_arc_from_to(methanotrophy, co2, net, weight=1)
     petri_utils.add_arc_from_to(CH4_in_soil, aerobic_oxidation, net, weight=1000)
     petri_utils.add_arc_from_to(aerobic, aerobic_oxidation, net, weight=100)
@@ -660,12 +651,13 @@ def create_ecosystem_net(tillerno_early, tillerno_mid, tillerno_late):
 
 def run_petrinet(
     ch4mod_df, 
-    initial_methanothrix=100, initial_methanobacterium=150, initial_methanosarcina=500,
-    initial_methanocella=150, initial_methanoregula=100,
-    initial_desulfomonile=100, initial_syntrophus=50, initial_sulfuricaulis=900,
-    initial_nitrospira=5000, initial_methylocaldum=750,
+    initial_methanothrix=5000, initial_methanobacterium=100, initial_methanosarcina=5000,
+    initial_methanocella=1000, initial_methanoregula=100,
+    initial_desulfomonile=200, initial_syntrophus=100, initial_sulfuricaulis=200,
+    initial_nitrospira=5000, initial_methylocaldum=500,
     initial_organic_matter=10000, initial_acetate=100, initial_sulphate=10000, initial_n_fertilizer=100000,
     tillerno_early=3, tillerno_mid=10, tillerno_late=20,
+    gamma_seed=3.0, gamma_resident=2.5, gamma_partner=2.0,
     inj1_enable=False, inj1_day=60, inj1_mom=0, inj1_mn=0, inj1_mrt=0, 
     inj2_enable=False, inj2_day=350, inj2_mom=0, inj2_mn=0, inj2_mrt=0, 
     inj3_enable=False, inj3_day=520, inj3_mom=0, inj3_mn=0, inj3_mrt=0,
@@ -709,9 +701,6 @@ def run_petrinet(
     history = []
     simulation_steps = len(ch4mod_df) * 24
 
-    def corr_to_weight(r_val):
-        return max(0.10, 0.40 + float(r_val))
-
     for step in range(simulation_steps):
         current_day = min(step // 24, len(ch4mod_df) - 1)
         current_day_num = current_day + 1
@@ -736,6 +725,7 @@ def run_petrinet(
             if CH4_in_soil in current_marking: del current_marking[CH4_in_soil]
             if n2o in current_marking: del current_marking[n2o]
                 
+        # Dynamic crop stages
         is_tillering = False
         is_heading = False
         is_ripening = False
@@ -760,26 +750,21 @@ def run_petrinet(
 
         if is_ripening: current_marking[days90] = 1
         elif days90 in current_marking: del current_marking[days90]
-
-        # Determine active week stage (Weeks 3, 6, 10; 0 = off-season/fallow)
+        
+        # Determine active week stage (Weeks 3, 6, 10). When not in season, active_week = 0
         if in_season:
-            if current_doy_in_season <= 28:
-                active_week = 3
-            elif current_doy_in_season <= 56:
-                active_week = 6
-            else:
-                active_week = 10
+            if current_doy_in_season <= 28: active_week = 3
+            elif current_doy_in_season <= 56: active_week = 6
+            else: active_week = 10
+            r_ch4 = WEEKLY_CORR_DATA[active_week]["CH4"]
         else:
             active_week = 0
-
-        corr_week = active_week if active_week in WEEKLY_CORR_DATA else 10
-        r_ch4 = WEEKLY_CORR_DATA[corr_week]["CH4"]
+            # During fallow (active_week == 0), baseline dormancy applies
+            r_ch4 = {t: {"r": 0.01} for t in WEEKLY_CORR_DATA[10]["CH4"]}
 
         # Physical Redox State
         eh_val = ch4mod_df.iloc[current_day]["Eh_Redox"]
-        is_drip_mode = eh_val > -100.0
-
-        if is_drip_mode:
+        if eh_val > -100.0:
             current_marking[drip] = 1
             if flood in current_marking: del current_marking[flood]
             current_marking[aerobic] = 1000
@@ -787,29 +772,25 @@ def run_petrinet(
         else:
             if drip in current_marking: del current_marking[drip]
             current_marking[flood] = 1
-            # Keep rhizosphere/surface oxic microzone alive in Flood
-            current_marking[aerobic] = 150 if in_season else 60
+            if aerobic in current_marking: del current_marking[aerobic]
             current_marking[anaerobic] = 100
 
         anaerobic_ratio = 1.0 / (1.0 + np.exp((eh_val - (-100.0)) / 30.0))
         aerobic_ratio = 1.0 - anaerobic_ratio
-        effective_oxic = max(aerobic_ratio, 0.35 if (not is_drip_mode and in_season) else 0.15)
         
         sulphate_count = current_marking.get(sulphate, 0)
         sulfate_availability = sulphate_count / (sulphate_count + 1000.0)
-        methanogen_sulfate_suppression = 1.0 - (0.4 * sulfate_availability)
+        methanogen_sulfate_suppression = 1.0 - (0.6 * sulfate_availability)
 
-        # Smooth positive dynamic weights
-        thrix_r   = corr_to_weight(r_ch4["Methanothrix"]["r"])
-        bact_r    = corr_to_weight(r_ch4["Methanobacterium"]["r"])
-        sarc_r    = corr_to_weight(r_ch4["Methanosarcina"]["r"])
-        cella_r   = corr_to_weight(r_ch4["Methanocella"]["r"])
-        regula_r  = corr_to_weight(r_ch4["Methanoregula"]["r"])
-        syntro_r  = corr_to_weight(r_ch4["Syntrophus"]["r"])
-        desulf_r  = corr_to_weight(r_ch4["Desulfomonile"]["r"])
-        methyl_r  = corr_to_weight(r_ch4["Methylocaldum"]["r"])
-        sulfuri_r = corr_to_weight(r_ch4["Sulfuricaulis"]["r"])
-        nitro_r   = corr_to_weight(-r_ch4["Nitrospira"]["r"])
+        # Dynamic arc weight calculations with adjustable Gamma parameters
+        thrix_r  = max(0.01, r_ch4["Methanothrix"]["r"])
+        bact_r   = max(0.01, r_ch4["Methanobacterium"]["r"])
+        sarc_r   = max(0.01, r_ch4["Methanosarcina"]["r"])
+        cella_r  = max(0.01, r_ch4["Methanocella"]["r"])
+        regula_r = max(0.01, r_ch4["Methanoregula"]["r"])
+        syntro_r = max(0.01, r_ch4["Syntrophus"]["r"])
+        desulf_r = max(0.01, r_ch4["Desulfomonile"]["r"])
+        methyl_r = max(0.01, r_ch4["Methylocaldum"]["r"])
 
         sum_mg = thrix_r + bact_r + sarc_r + cella_r + regula_r
         w_thrix  = thrix_r / sum_mg
@@ -819,28 +800,38 @@ def run_petrinet(
         w_regula = regula_r / sum_mg
 
         for arc in net.arcs:
-            if arc.source == mg_sarc and arc.target == methanosarcina:
-                arc.weight = max(4, int(round(3.5 + 8.0 * anaerobic_ratio * methanogen_sulfate_suppression * w_sarc)))
-            elif arc.source == mg_bact and arc.target == methanobacterium:
-                arc.weight = max(2, int(round(2.0 + 3.5 * anaerobic_ratio * w_bact)))
+            # Dominant Resident Methanogens (Using gamma_resident, default: 2.5)
+            # Guaranteed net-positive growth during flooded conditions (floor at 3 tokens)
+            if arc.source == mg_thrix and arc.target == methanothrix:
+                arc.weight = max(3, int(50 * (0.05 + anaerobic_ratio * methanogen_sulfate_suppression * w_thrix * gamma_resident)))
+            elif arc.source == mg_sarc and arc.target == methanosarcina:
+                arc.weight = max(3, int(50 * (0.05 + anaerobic_ratio * methanogen_sulfate_suppression * w_sarc * gamma_resident)))
             elif arc.source == mg_cella and arc.target == methanocella:
-                arc.weight = max(2, int(round(2.0 + 3.5 * anaerobic_ratio * w_cella)))
-            elif arc.source == mg_thrix and arc.target == methanothrix:
-                arc.weight = max(4, int(round(3.8 + 2.5 * anaerobic_ratio * methanogen_sulfate_suppression * w_thrix)))
+                arc.weight = max(3, int(25 * (0.05 + anaerobic_ratio * w_cella * gamma_resident)))
+
+            # Seed-bank Methanogens (Using gamma_seed, default: 3.0)
+            elif arc.source == mg_bact and arc.target == methanobacterium:
+                arc.weight = max(2, int(15 * (0.05 + anaerobic_ratio * w_bact * gamma_seed)))
             elif arc.source == mg_regula and arc.target == methanoregula:
-                arc.weight = max(2, int(round(1.8 + 2.5 * anaerobic_ratio * w_regula)))
+                arc.weight = max(2, int(15 * (0.05 + anaerobic_ratio * w_regula * gamma_seed)))
+            
+            # Syntrophs & Reducers (Using gamma_partner, default: 2.0)
             elif arc.source == syntroph_ferm and arc.target == syntrophus:
-                arc.weight = max(2, int(round(2.0 + 1.5 * anaerobic_ratio * syntro_r)))
+                arc.weight = max(2, int(15 * (0.05 + anaerobic_ratio * syntro_r * gamma_partner)))
             elif arc.source == desulf_red and arc.target == desulfomonile:
-                arc.weight = max(2, int(round(2.0 + 2.5 * anaerobic_ratio * sulfate_availability * desulf_r)))
-            elif arc.target == sulfuricaulis:
-                arc.weight = max(3, int(round(2.5 + 3.0 * (0.4 + 0.6 * effective_oxic) * sulfuri_r * Y_SULFURICAULIS)))
+                arc.weight = max(2, int(15 * (0.05 + anaerobic_ratio * sulfate_availability * desulf_r * gamma_partner)))
+            
+            # Other Cycling Partners
+            elif arc.source == sulfuri_ox and arc.target == sulfuricaulis:
+                arc.weight = max(2, int(15 * (0.05 + (0.5 * anaerobic_ratio + 0.5 * aerobic_ratio) * Y_SULFURICAULIS)))
             elif arc.source == methanotrophy and arc.target == methylocaldum:
-                arc.weight = max(3, int(round(2.5 + 4.5 * effective_oxic * methyl_r * Y_METHYLOC)))
+                arc.weight = max(2, int(20 * (0.05 + aerobic_ratio * methyl_r * Y_METHYLOC)))
+            
+            # Substrate & Nitrospira Turnover
             elif arc.source == acetogenesis and arc.target == acetate:
-                arc.weight = max(10, int(round(40 * (0.2 + anaerobic_ratio * Y_ACETATE))))
+                arc.weight = max(1, int(100 * (0.2 + anaerobic_ratio * Y_ACETATE)))
             elif arc.source == nitrification and arc.target == nitrospira:
-                arc.weight = max(4, int(round(3.5 + 7.5 * effective_oxic * (0.6 + 0.4 * nitro_r) * Y_NITROSPIRA)))
+                arc.weight = max(1, int(30 * (0.05 + aerobic_ratio * Y_NITROSPIRA)))
 
         if step % 24 == 0:
             prod_ch4 = ch4mod_df.iloc[current_day]["Prod_CH4"]
@@ -876,7 +867,7 @@ def run_petrinet(
         history.append(state)
 
         enabled = list(enabled_transitions(net, current_marking))
-        if is_drip_mode:
+        if current_marking.get(aerobic, 0) > 0:
             for t_anaerobic in [
                 acetogenesis, syntroph_ferm, desulf_red, anaerobic_decay, 
                 mg_thrix, mg_bact, mg_sarc, mg_cella, mg_regula,
@@ -884,8 +875,6 @@ def run_petrinet(
             ]:
                 if t_anaerobic in enabled: 
                     enabled.remove(t_anaerobic)
-        else:
-            enabled = [t for t in enabled if t.name != "O2_Toxicity"]
 
         if enabled:
             transition_to_fire = random.choice(enabled)
@@ -896,16 +885,16 @@ def run_petrinet(
     results_df.to_csv(csv_path, index=False)
 
     plot_definitions = [
-        ("methanothrix", "Methanothrix", "Methanothrix", "#008080"),
-        ("methanobacterium", "Methanobacterium", "Methanobacterium", "#2E8B57"),
-        ("methanosarcina", "Methanosarcina", "Methanosarcina", "#228B22"),
-        ("methanocella", "Methanocella (Rice Cluster I)", "Methanocella", "#3CB371"),
-        ("methanoregula", "Methanoregula", "Methanoregula", "#66CDAA"),
-        ("desulfomonile", "Desulfomonile", "Desulfomonile", "#4B0082"),
-        ("syntrophus", "Syntrophus", "Syntrophus", "#8A2BE2"),
-        ("sulfuricaulis", "Sulfuricaulis", "Sulfuricaulis", "#DAA520"),
-        ("nitrospira", "Nitrospira (Nitrifier)", "Nitrospira", "blue"),
-        ("methylocaldum", "Methylocaldum (Methanotroph)", "Methylocaldum", "#20B2AA"),
+        ("methanothrix", "Methanothrix (Initial 5000, Wk3 r=0.617)", "Methanothrix", "#008080"),
+        ("methanobacterium", "Methanobacterium (Initial 100, Wk3 r=0.514)", "Methanobacterium", "#2E8B57"),
+        ("methanosarcina", "Methanosarcina (Initial 5000)", "Methanosarcina", "#228B22"),
+        ("methanocella", "Methanocella (Initial 1000, Rice Cluster I)", "Methanocella", "#3CB371"),
+        ("methanoregula", "Methanoregula (Initial 100, Wk6 Spike r=0.621 ***)", "Methanoregula", "#66CDAA"),
+        ("desulfomonile", "Desulfomonile (Initial 200, Wk3 r=0.501)", "Desulfomonile", "#4B0082"),
+        ("syntrophus", "Syntrophus (Initial 100, Wk6 Spike r=0.562 ***)", "Syntrophus", "#8A2BE2"),
+        ("sulfuricaulis", "Sulfuricaulis (Initial 200)", "Sulfuricaulis", "#DAA520"),
+        ("nitrospira", "Nitrospira (Initial 5000, Nitrifier)", "Nitrospira", "blue"),
+        ("methylocaldum", "Methylocaldum (Initial 500, Methanotroph)", "Methylocaldum", "#20B2AA"),
         ("acetate", "Acetate Pool", "Acetate", "brown"),
         ("sulphate", "Sulphate Pool", "Sulphate", "purple"),
         ("nitrate", "Nitrate Pool", "Nitrate", "orange"),
@@ -961,6 +950,7 @@ def run_coupled_simulation(
     initial_nitrospira, initial_methylocaldum,
     initial_organic_matter, initial_acetate, initial_sulphate, initial_n_fertilizer,
     tillerno_early, tillerno_mid, tillerno_late,
+    gamma_seed, gamma_resident, gamma_partner,
     inj1_enable, inj1_day, inj1_omn, inj1_oms, inj1_mom, inj1_mn, inj1_mrt,
     inj2_enable, inj2_day, inj2_omn, inj2_oms, inj2_mom, inj2_mn, inj2_mrt,
     inj3_enable, inj3_day, inj3_omn, inj3_oms, inj3_mom, inj3_mn, inj3_mrt,
@@ -994,7 +984,6 @@ def run_coupled_simulation(
         inj3_enable=inj3_enable, inj3_day=inj3_day, inj3_omn=inj3_omn, inj3_oms=inj3_oms
     )
     
-    # Explicit keyword argument call prevents any positional shift/overflow
     (
         m_thrix_plot, m_bact_plot, m_sarc_plot, m_cella_plot, m_regula_plot,
         desulf_plot, syntroph_plot, sulfuri_plot,
@@ -1022,6 +1011,9 @@ def run_coupled_simulation(
         tillerno_early=tillerno_early,
         tillerno_mid=tillerno_mid,
         tillerno_late=tillerno_late,
+        gamma_seed=gamma_seed,
+        gamma_resident=gamma_resident,
+        gamma_partner=gamma_partner,
         inj1_enable=inj1_enable,
         inj1_day=inj1_day,
         inj1_mom=inj1_mom,
@@ -1058,8 +1050,8 @@ def run_coupled_simulation(
 with gr.Blocks() as app:
     gr.Markdown("# 🌾 Coupled CH4MOD & Microbiome Digital Twin Simulator")
     gr.Markdown(
-        "Simulates greenhouse gas dynamics using **CH4MOD** model and a **Petri Net** "
-        "driven by stage-dependent empirical field correlation metrics for 10 distinct microbial taxa."
+        r"Simulates greenhouse gas dynamics using **CH4MOD** and **Petri Net** models "
+        r"driven by stage-dependent empirical field correlation metrics (**Weeks 3, 6, and 10**) for 10 distinct microbial taxa."
     )
     
     with gr.Tabs():
@@ -1159,18 +1151,18 @@ with gr.Blocks() as app:
         with gr.Tab("Microbial Populations"):
             gr.Markdown("### 10 Syntrophic Microbes (Dynamic Weights across Weeks 3, 6, and 10)")
             with gr.Row():
-                initial_methanothrix = gr.Number(label="Methanothrix (Wk3 r=0.617 ***)", value=100)
-                initial_methanobacterium = gr.Number(label="Methanobacterium (Wk3 r=0.514 ***)", value=150)
-                initial_methanosarcina = gr.Number(label="Methanosarcina", value=500)
+                initial_methanothrix = gr.Number(label="Methanothrix (Wk3 r=0.617 ***)", value=5000)
+                initial_methanobacterium = gr.Number(label="Methanobacterium (Wk3 r=0.514 ***)", value=100)
+                initial_methanosarcina = gr.Number(label="Methanosarcina", value=5000)
             with gr.Row():
-                initial_methanocella = gr.Number(label="Methanocella (Rice Cluster I, Wk3 r=0.530 ***)", value=150)
+                initial_methanocella = gr.Number(label="Methanocella (Rice Cluster I, Wk3 r=0.530 ***)", value=1000)
                 initial_methanoregula = gr.Number(label="Methanoregula (Wk6 Spike r=0.621 ***)", value=100)
-                initial_syntrophus = gr.Number(label="Syntrophus (Wk6 Spike r=0.562 ***)", value=50)
+                initial_syntrophus = gr.Number(label="Syntrophus (Wk6 Spike r=0.562 ***)", value=100)
             with gr.Row():
-                initial_desulfomonile = gr.Number(label="Desulfomonile (Wk3 r=0.501 ***)", value=100)
-                initial_sulfuricaulis = gr.Number(label="Sulfuricaulis", value=900)
+                initial_desulfomonile = gr.Number(label="Desulfomonile (Wk3 r=0.501 ***)", value=200)
+                initial_sulfuricaulis = gr.Number(label="Sulfuricaulis", value=200)
                 initial_nitrospira = gr.Number(label="Nitrospira (Nitrifier)", value=5000)
-                initial_methylocaldum = gr.Number(label="Methylocaldum (Methanotroph)", value=750)
+                initial_methylocaldum = gr.Number(label="Methylocaldum (Methanotroph)", value=500)
             with gr.Row():                
                 initial_organic_matter = gr.Number(label="Initial Organic Matter", value=10000)
                 initial_acetate = gr.Number(label="Initial Acetate", value=100)
@@ -1180,6 +1172,21 @@ with gr.Blocks() as app:
                 tillerno_early = gr.Number(label="Tiller No (early)", value=3)
                 tillerno_mid = gr.Number(label="Tiller No (mid)", value=10)
                 tillerno_late = gr.Number(label="Tiller No (late)", value=20)
+                
+            gr.Markdown(r"### ⚙️ Kinetic Amplification Gains [Geographical / Sensitivity Calibration]")
+            with gr.Row():
+                gamma_seed = gr.Slider(
+                    minimum=1.0, maximum=5.0, value=3.0, step=0.1, 
+                    label="γ Seed Methanogens (Methanoregula, Methanobacterium)"
+                )
+                gamma_resident = gr.Slider(
+                    minimum=1.0, maximum=5.0, value=2.5, step=0.1, 
+                    label="γ Resident Methanogens (Methanothrix, Methanosarcina, Methanocella)"
+                )
+                gamma_partner = gr.Slider(
+                    minimum=1.0, maximum=5.0, value=2.0, step=0.1, 
+                    label="γ Syntrophs & Reducers (Syntrophus, Desulfomonile)"
+                )
             
     run_btn = gr.Button("▶ Run 2-Year Longitudinal Coupled Simulation", variant="primary", size="lg")
     gr.Markdown("---")
@@ -1242,6 +1249,7 @@ with gr.Blocks() as app:
             initial_nitrospira, initial_methylocaldum,
             initial_organic_matter, initial_acetate, initial_sulphate, initial_n_fertilizer,
             tillerno_early, tillerno_mid, tillerno_late,
+            gamma_seed, gamma_resident, gamma_partner,
             inj1_enable, inj1_day, inj1_omn, inj1_oms, inj1_mom, inj1_mn, inj1_mrt,
             inj2_enable, inj2_day, inj2_omn, inj2_oms, inj2_mom, inj2_mn, inj2_mrt,
             inj3_enable, inj3_day, inj3_omn, inj3_oms, inj3_mom, inj3_mn, inj3_mrt
